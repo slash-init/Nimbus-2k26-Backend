@@ -11,6 +11,11 @@ enum TradeType {
   SELL
 }
 
+enum ClubType {
+  DEPARTMENTAL
+  CORE
+}
+
 model User {
   user_id         String   @id @default(uuid()) @db.Uuid
   full_name       String
@@ -26,11 +31,26 @@ model User {
 model Club {
   club_id     Int      @id @default(autoincrement())
   club_name   String   @unique
+  club_type   ClubType
   department  String?
   created_at  DateTime @default(now())
 
   events      Event[]
+  projects    Project[]
   stock       Stock?
+}
+
+model Project {
+  project_id   Int      @id @default(autoincrement())
+  project_name String
+  description  String?
+  image_url    String?
+  created_at   DateTime @default(now())
+
+  club_id      Int
+  club         Club     @relation(fields: [club_id], references: [club_id], onDelete: Cascade)
+
+  @@index([club_id])
 }
 
 model Event {
