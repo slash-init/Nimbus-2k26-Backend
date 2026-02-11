@@ -28,6 +28,15 @@ model User {
   trades          TradeTransaction[]
 }
 
+model CoreTeamMember {
+  id        Int      @id @default(autoincrement())
+  name      String
+  role      String
+  image_url String?
+  linkedin  String?
+  created_at DateTime @default(now())
+}
+
 model Club {
   club_id     Int      @id @default(autoincrement())
   club_name   String   @unique
