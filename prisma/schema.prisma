@@ -40,7 +40,7 @@ model CoreTeamMember {
 model Club {
   club_id     Int      @id @default(autoincrement())
   club_name   String   @unique
-  club_type   ClubType
+  club_type   ClubType @default(DEPARTMENTAL)
   department  String?
   created_at  DateTime @default(now())
 
