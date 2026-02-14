@@ -24,7 +24,6 @@ app.use('/api/users', UserRoutes);
 app.use('/api/coreteam', CoreTeamRoutes);
 
 
-
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 }); 
