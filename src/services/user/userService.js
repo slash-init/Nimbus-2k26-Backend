@@ -32,8 +32,50 @@ const createGoogleUser = async (name, email, googleId) => {
 
 
 
+const findUserByGoogleId = async (googleId) => {
+  const result = await sql`
+    SELECT *
+    FROM users
+    WHERE google_id = ${googleId}
+  `;
+  return result[0];
+};
+
+const findUserById = async (userId) => {
+  const result = await sql`
+    SELECT user_id, full_name AS name, email, virtual_balance, created_at
+    FROM users
+    WHERE user_id = ${userId}
+  `;
+  return result[0];
+};
+
+const updateUser = async (userId, { name }) => {
+  const result = await sql`
+    UPDATE users
+    SET full_name = ${name}
+    WHERE user_id = ${userId}
+    RETURNING user_id, full_name AS name, email, virtual_balance
+  `;
+  return result[0];
+};
+
+const updateUserBalance = async (userId, money) => {
+  const result = await sql`
+    UPDATE users
+    SET virtual_balance = ${money}
+    WHERE user_id = ${userId}
+    RETURNING user_id, full_name AS name, email, virtual_balance
+  `;
+  return result[0];
+};
+
 export{
   createUser,
   findUserByEmail,
-  createGoogleUser
+  createGoogleUser,
+  findUserByGoogleId,
+  findUserById,
+  updateUser,
+  updateUserBalance
 };
