@@ -1,19 +1,15 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-
 import express from 'express';
 import UserRoutes from "./routes/userRoute.js";
 import CoreTeamRoutes from "./routes/coreTeamRoute.js";
-
+import errorHandler from "./middlewares/errorMiddleware.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-
-
-
-// Middleware to parse JSON bodies  
+// Middleware to parse JSON bodies
 app.use(express.json());
 
 app.get('/', (req, res) => {
@@ -23,7 +19,9 @@ app.get('/', (req, res) => {
 app.use('/api/users', UserRoutes);
 app.use('/api/coreteam', CoreTeamRoutes);
 
+// Global error handler — must be last
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
-}); 
+});

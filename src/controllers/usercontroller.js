@@ -1,10 +1,6 @@
-import {createUser, findUserByEmail } from "../services/user/userService.js";
-
+import { createUser, findUserByEmail, findUserById, updateUser, updateUserBalance } from "../services/user/userService.js";
 import bcrypt from "bcrypt";
-
-import sql from "../config/db.js";
-
-import jwt from "jsonwebtoken";
+import generateToken from "../services/generateTokenService.js";
 
 const registerUser = async (req, res) => {
     try {
@@ -42,7 +38,7 @@ const loginUser = async (req, res) => {
         if (!isPasswordValid) {
             return res.status(401).json({ error: "Invalid Password" });
         }
-        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
+        const token = generateToken(user.id);
 
         res.json({ 
             success: true,
@@ -58,7 +54,55 @@ const loginUser = async (req, res) => {
 }
 
 
+const getUserProfile = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const user = await findUserById(userId);
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        res.json({ success: true, user });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+const updateUserProfile = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const { name } = req.body;
+
+        if (!name) {
+            return res.status(400).json({ error: "No fields to update provided" });
+        }
+
+        const user = await updateUser(userId, { name });
+        res.json({ success: true, message: "Profile updated", user });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+const updateBalance = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const { money } = req.body;
+
+        if (money === undefined || money === null) {
+            return res.status(400).json({ error: "money field is required" });
+        }
+
+        const user = await updateUserBalance(userId, money);
+        res.json({ success: true, message: "Balance updated", user });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 export{
     registerUser,
-    loginUser
+    loginUser,
+    getUserProfile,
+    updateUserProfile,
+    updateBalance
 }
